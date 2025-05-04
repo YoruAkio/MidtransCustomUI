@@ -576,7 +576,7 @@ export default function Home() {
                   </div>
                   <motion.button
                     onClick={() => handlePurchase(service)}
-                    className="w-full py-3 bg-white/80 rounded-lg font-medium text-[#333] hover:bg-[#5E81F4] hover:text-white transition-all duration-300 mt-auto"
+                    className="w-full py-3 bg-[#5E81F4]/80 rounded-lg font-medium text-white hover:bg-[#5E81F4] hover:text-white transition-all duration-300 mt-auto"
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                   >
