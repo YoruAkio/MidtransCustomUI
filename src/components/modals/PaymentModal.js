@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaTimes, FaCheckCircle, FaExclamationTriangle, FaQrcode, FaSpinner } from "react-icons/fa";
+import { FaTimes, FaCheckCircle, FaExclamationTriangle, FaQrcode, FaSpinner, FaClock } from "react-icons/fa";
 
 export default function PaymentModal({ 
   isOpen, 
@@ -109,7 +109,7 @@ export default function PaymentModal({
       if (status !== "success" && status !== "failed") {
         checkPaymentStatus();
       }
-    }, 000);
+    }, 30000);
     
     return () => {
       clearInterval(countdownInterval);
@@ -176,7 +176,7 @@ export default function PaymentModal({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="bg-white rounded-xl border border-gray-200 shadow-xl p-4 md:p-6 w-full max-w-[95%] md:max-w-3xl"
+            className="bg-white rounded-xl border border-gray-200 shadow-xl p-3 md:p-6 w-full max-w-[95%] md:max-w-3xl"
             onClick={(e) => e.stopPropagation()}
           >
             {status === "success" ? (
@@ -235,21 +235,29 @@ export default function PaymentModal({
               </div>
             ) : (
               <div>
-                <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
+                <div className="flex items-center justify-between mb-3 border-b border-gray-100 pb-2">
                   <h2 className="text-lg md:text-xl font-bold text-gray-800 flex items-center gap-2">
                     <FaQrcode className="text-[#5E81F4]" />
                     Scan QR Code to Pay
                   </h2>
-                  <button onClick={handleClose} className="text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors">
-                    <FaTimes />
-                  </button>
+                  <div className="flex items-center">
+                    {/* Compact timer for mobile */}
+                    <div className="md:hidden flex items-center bg-amber-50 border border-amber-100 rounded-lg px-2 py-1 mr-2">
+                      <FaClock className="text-amber-500 mr-1.5" />
+                      <span className="font-medium text-amber-700">{formatTime(countdown)}</span>
+                    </div>
+                    <button onClick={handleClose} className="text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors">
+                      <FaTimes />
+                    </button>
+                  </div>
                 </div>
                 
                 {/* Desktop (landscape) and Mobile (portrait) layout */}
                 <div className="flex flex-col md:flex-row md:gap-6">
-                  {/* QR Code Section - Full width on mobile, left side on desktop */}
-                  <div className="md:w-1/2 md:flex-shrink-0 mb-4 md:mb-0">
-                    <div className="bg-[#FFECB3] rounded-lg p-2 mb-4 flex items-center">
+                  {/* QR Code Section */}
+                  <div className="md:w-1/2 md:flex-shrink-0 mb-3 md:mb-0">
+                    {/* Timer - only shown on desktop */}
+                    <div className="hidden md:flex bg-[#FFECB3] rounded-lg p-2 mb-4 items-center">
                       <div className="w-1.5 h-12 bg-[#FF9800] rounded-full mr-3"></div>
                       <div>
                         <p className="font-medium text-[#E65100] text-sm md:text-base">Payment will expire in:</p>
@@ -257,39 +265,49 @@ export default function PaymentModal({
                       </div>
                     </div>
                     
-                    <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4 overflow-hidden">
-                      <div className="p-3 md:p-4 flex flex-col items-center">
-                        <div className="p-3 md:p-4 border-2 border-[#5E81F4]/20 rounded-lg flex items-center justify-center min-h-[180px] md:min-h-[220px] w-full bg-white">
+                    {/* QR Code Container */}
+                    <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                      <div className="p-2 md:p-4 flex flex-col items-center">
+                        <div className="p-2 md:p-4 border-2 border-[#5E81F4]/20 rounded-lg flex items-center justify-center min-h-[160px] md:min-h-[220px] w-full bg-white">
                           {qrImage ? (
                             <img 
                               src={qrImage} 
                               alt="Payment QR Code" 
-                              className="w-full max-w-[200px] h-auto"
+                              className="w-full max-w-[180px] md:max-w-[200px] h-auto"
                             />
                           ) : (
                             <div className="flex flex-col items-center justify-center text-gray-400">
-                              <FaSpinner className="animate-spin text-3xl md:text-4xl mb-3 text-[#5E81F4]" />
-                              <span className="text-gray-500 text-sm md:text-base">Loading QR Code...</span>
+                              <FaSpinner className="animate-spin text-3xl md:text-4xl mb-2 md:mb-3 text-[#5E81F4]" />
+                              <span className="text-gray-500 text-sm">Loading QR Code...</span>
                             </div>
                           )}
                         </div>
                         
-                        <div className="w-full mt-4">
-                          <p className="text-xs md:text-sm text-gray-600 mb-2 md:mb-3 font-medium text-center">Supported payment methods:</p>
-                          <div className="flex gap-2 md:gap-3 flex-wrap justify-center">
-                            <div className="px-2 py-1 md:px-3 md:py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">GoPay</div>
-                            <div className="px-2 py-1 md:px-3 md:py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">ShopeePay</div>
-                            <div className="px-2 py-1 md:px-3 md:py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">OVO</div>
-                            <div className="px-2 py-1 md:px-3 md:py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">DANA</div>
+                        {/* Payment methods - simplified on mobile */}
+                        <div className="w-full mt-2 md:mt-4">
+                          <div className="flex gap-1 md:gap-3 flex-wrap justify-center mt-1">
+                            <div className="px-2 py-0.5 md:px-3 md:py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">GoPay</div>
+                            <div className="px-2 py-0.5 md:px-3 md:py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">ShopeePay</div>
+                            <div className="px-2 py-0.5 md:px-3 md:py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">OVO</div>
+                            <div className="px-2 py-0.5 md:px-3 md:py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">DANA</div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Order Details Section - Full width on mobile, right side on desktop */}
+                  {/* Order Details Section - Hidden on mobile except price */}
                   <div className="md:w-1/2">
-                    <div className="bg-gray-50 rounded-lg border border-gray-100 p-3 md:p-4 mb-4">
+                    {/* Price only on mobile view */}
+                    <div className="md:hidden bg-gray-50 rounded-lg border border-gray-100 p-2 mb-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600 text-sm">Total:</span>
+                        <span className="font-bold text-[#5E81F4] text-base">{formatPrice(order?.price)}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Full order details only on desktop */}
+                    <div className="hidden md:block bg-gray-50 rounded-lg border border-gray-100 p-3 md:p-4 mb-4">
                       <h3 className="font-medium text-gray-700 mb-3 text-sm md:text-base">Order Details</h3>
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm md:text-base">
@@ -311,7 +329,8 @@ export default function PaymentModal({
                       </div>
                     </div>
                     
-                    <div className="bg-gray-50 rounded-lg border border-gray-100 p-3 md:p-4 mb-4">
+                    {/* Instructions - simplified on mobile */}
+                    <div className="hidden md:block bg-gray-50 rounded-lg border border-gray-100 p-3 md:p-4 mb-4">
                       <h3 className="font-medium text-gray-700 mb-3 text-sm md:text-base">Payment Instructions</h3>
                       <ol className="text-xs md:text-sm text-gray-600 space-y-2 list-decimal pl-4">
                         <li>Open your e-wallet or payment app</li>
@@ -321,6 +340,12 @@ export default function PaymentModal({
                       </ol>
                     </div>
                     
+                    {/* Simple instructions on mobile */}
+                    <div className="md:hidden text-xs text-gray-500 mb-3 text-center">
+                      Open your payment app and scan the QR code above
+                    </div>
+                    
+                    {/* Payment button */}
                     <motion.button
                       onClick={checkPaymentStatus}
                       disabled={isCheckingStatus}
@@ -331,7 +356,7 @@ export default function PaymentModal({
                       {isCheckingStatus ? (
                         <>
                           <FaSpinner className="animate-spin text-sm" />
-                          <span className="text-sm md:text-base">Checking payment status...</span>
+                          <span className="text-sm md:text-base">Checking status...</span>
                         </>
                       ) : (
                         <span className="text-sm md:text-base">I've completed the payment</span>
