@@ -104,12 +104,12 @@ export default function PaymentModal({
       });
     }, 1000); // Update every second
     
-    // Check payment status every 15 seconds
+    // Check payment status every 30 seconds
     checkIntervalRef.current = setInterval(() => {
       if (status !== "success" && status !== "failed") {
         checkPaymentStatus();
       }
-    }, 15000);
+    }, 000);
     
     return () => {
       clearInterval(countdownInterval);
@@ -176,7 +176,7 @@ export default function PaymentModal({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="bg-white rounded-xl border border-gray-200 shadow-xl p-6 md:p-8 w-full max-w-md"
+            className="bg-white rounded-xl border border-gray-200 shadow-xl p-4 md:p-6 w-full max-w-[95%] md:max-w-3xl"
             onClick={(e) => e.stopPropagation()}
           >
             {status === "success" ? (
@@ -235,8 +235,8 @@ export default function PaymentModal({
               </div>
             ) : (
               <div>
-                <div className="flex items-center justify-between mb-5 border-b border-gray-100 pb-4">
-                  <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
+                  <h2 className="text-lg md:text-xl font-bold text-gray-800 flex items-center gap-2">
                     <FaQrcode className="text-[#5E81F4]" />
                     Scan QR Code to Pay
                   </h2>
@@ -245,81 +245,100 @@ export default function PaymentModal({
                   </button>
                 </div>
                 
-                <div className="bg-[#FFECB3] rounded-lg p-2.5 mb-6 flex items-center">
-                  <div className="w-1.5 h-12 bg-[#FF9800] rounded-full mr-3"></div>
-                  <div>
-                    <p className="font-medium text-[#E65100]">Payment will expire in:</p>
-                    <p className="text-[#E65100] text-xl font-bold">{formatTime(countdown)}</p>
-                  </div>
-                </div>
-                
-                <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6 overflow-hidden">
-                  <div className="bg-[#5E81F4]/5 p-4 border-b border-gray-100">
-                    <h3 className="font-medium text-gray-700">Scan with your payment app</h3>
-                  </div>
-                  
-                  <div className="p-5">
-                    <div className="flex flex-col items-center">
-                      <div className="mb-5 p-4 border-2 border-[#5E81F4]/20 rounded-lg flex items-center justify-center min-h-[220px] w-full bg-white">
-                        {qrImage ? (
-                          <img 
-                            src={qrImage} 
-                            alt="Payment QR Code" 
-                            className="w-full max-w-[200px] h-auto"
-                          />
-                        ) : (
-                          <div className="flex flex-col items-center justify-center text-gray-400">
-                            <FaSpinner className="animate-spin text-4xl mb-3 text-[#5E81F4]" />
-                            <span className="text-gray-500">Loading QR Code...</span>
+                {/* Desktop (landscape) and Mobile (portrait) layout */}
+                <div className="flex flex-col md:flex-row md:gap-6">
+                  {/* QR Code Section - Full width on mobile, left side on desktop */}
+                  <div className="md:w-1/2 md:flex-shrink-0 mb-4 md:mb-0">
+                    <div className="bg-[#FFECB3] rounded-lg p-2 mb-4 flex items-center">
+                      <div className="w-1.5 h-12 bg-[#FF9800] rounded-full mr-3"></div>
+                      <div>
+                        <p className="font-medium text-[#E65100] text-sm md:text-base">Payment will expire in:</p>
+                        <p className="text-[#E65100] text-lg md:text-xl font-bold">{formatTime(countdown)}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-4 overflow-hidden">
+                      <div className="p-3 md:p-4 flex flex-col items-center">
+                        <div className="p-3 md:p-4 border-2 border-[#5E81F4]/20 rounded-lg flex items-center justify-center min-h-[180px] md:min-h-[220px] w-full bg-white">
+                          {qrImage ? (
+                            <img 
+                              src={qrImage} 
+                              alt="Payment QR Code" 
+                              className="w-full max-w-[200px] h-auto"
+                            />
+                          ) : (
+                            <div className="flex flex-col items-center justify-center text-gray-400">
+                              <FaSpinner className="animate-spin text-3xl md:text-4xl mb-3 text-[#5E81F4]" />
+                              <span className="text-gray-500 text-sm md:text-base">Loading QR Code...</span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="w-full mt-4">
+                          <p className="text-xs md:text-sm text-gray-600 mb-2 md:mb-3 font-medium text-center">Supported payment methods:</p>
+                          <div className="flex gap-2 md:gap-3 flex-wrap justify-center">
+                            <div className="px-2 py-1 md:px-3 md:py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">GoPay</div>
+                            <div className="px-2 py-1 md:px-3 md:py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">ShopeePay</div>
+                            <div className="px-2 py-1 md:px-3 md:py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">OVO</div>
+                            <div className="px-2 py-1 md:px-3 md:py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">DANA</div>
                           </div>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-600 mb-3 font-medium">Supported payment methods:</p>
-                      <div className="flex gap-3 mb-4 flex-wrap justify-center">
-                        <div className="px-3 py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">GoPay</div>
-                        <div className="px-3 py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">ShopeePay</div>
-                        <div className="px-3 py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">OVO</div>
-                        <div className="px-3 py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">DANA</div>
+                        </div>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="border-t border-gray-100 p-4 bg-gray-50">
-                    <div className="flex justify-between mb-2">
-                      <span className="text-gray-600">Order ID:</span>
-                      <span className="font-mono text-sm font-medium text-gray-800">{order?.orderId}</span>
+                  {/* Order Details Section - Full width on mobile, right side on desktop */}
+                  <div className="md:w-1/2">
+                    <div className="bg-gray-50 rounded-lg border border-gray-100 p-3 md:p-4 mb-4">
+                      <h3 className="font-medium text-gray-700 mb-3 text-sm md:text-base">Order Details</h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm md:text-base">
+                          <span className="text-gray-600">Order ID:</span>
+                          <span className="font-mono text-xs md:text-sm font-medium text-gray-800">{order?.orderId}</span>
+                        </div>
+                        <div className="flex justify-between text-sm md:text-base">
+                          <span className="text-gray-600">Service:</span>
+                          <span className="font-medium text-gray-800">
+                            {order?.serviceType === "portfolio" ? "Portfolio Website" : 
+                             order?.serviceType === "landing" ? "Landing Page" : 
+                             "Custom Web Creation"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm md:text-base">
+                          <span className="text-gray-600">Amount:</span>
+                          <span className="font-bold text-[#5E81F4]">{formatPrice(order?.price)}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-gray-600">Service:</span>
-                      <span className="font-medium text-gray-800">
-                        {order?.serviceType === "portfolio" ? "Portfolio Website" : 
-                         order?.serviceType === "landing" ? "Landing Page" : 
-                         "Custom Web Creation"}
-                      </span>
+                    
+                    <div className="bg-gray-50 rounded-lg border border-gray-100 p-3 md:p-4 mb-4">
+                      <h3 className="font-medium text-gray-700 mb-3 text-sm md:text-base">Payment Instructions</h3>
+                      <ol className="text-xs md:text-sm text-gray-600 space-y-2 list-decimal pl-4">
+                        <li>Open your e-wallet or payment app</li>
+                        <li>Scan the QR code shown on the left</li>
+                        <li>Follow the payment instructions in your app</li>
+                        <li>Click "I've completed the payment" below</li>
+                      </ol>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Amount:</span>
-                      <span className="font-bold text-[#5E81F4]">{formatPrice(order?.price)}</span>
-                    </div>
+                    
+                    <motion.button
+                      onClick={checkPaymentStatus}
+                      disabled={isCheckingStatus}
+                      className={`w-full py-2.5 md:py-3.5 ${isCheckingStatus ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#5E81F4] hover:bg-[#4a6bcd]'} text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 shadow-sm`}
+                      whileHover={{ scale: isCheckingStatus ? 1 : 1.02 }}
+                      whileTap={{ scale: isCheckingStatus ? 1 : 0.98 }}
+                    >
+                      {isCheckingStatus ? (
+                        <>
+                          <FaSpinner className="animate-spin text-sm" />
+                          <span className="text-sm md:text-base">Checking payment status...</span>
+                        </>
+                      ) : (
+                        <span className="text-sm md:text-base">I've completed the payment</span>
+                      )}
+                    </motion.button>
                   </div>
                 </div>
-                
-                <motion.button
-                  onClick={checkPaymentStatus}
-                  disabled={isCheckingStatus}
-                  className={`w-full py-3.5 ${isCheckingStatus ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#5E81F4] hover:bg-[#4a6bcd]'} text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 shadow-sm`}
-                  whileHover={{ scale: isCheckingStatus ? 1 : 1.02 }}
-                  whileTap={{ scale: isCheckingStatus ? 1 : 0.98 }}
-                >
-                  {isCheckingStatus ? (
-                    <>
-                      <FaSpinner className="animate-spin text-sm" />
-                      <span>Checking payment status...</span>
-                    </>
-                  ) : (
-                    <span>I've completed the payment</span>
-                  )}
-                </motion.button>
               </div>
             )}
           </motion.div>
