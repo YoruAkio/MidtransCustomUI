@@ -42,22 +42,6 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Load Midtrans Snap JS
-  // useEffect(() => {
-  //   const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
-  //   const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
-
-  //   let scriptTag = document.createElement("script");
-  //   scriptTag.src = midtransScriptUrl;
-  //   scriptTag.setAttribute("data-client-key", clientKey);
-
-  //   document.body.appendChild(scriptTag);
-
-  //   return () => {
-  //     document.body.removeChild(scriptTag);
-  //   };
-  // }, []);
-
   // Check for pending order on load
   useEffect(() => {
     const storedUser = localStorage.getItem("userData");

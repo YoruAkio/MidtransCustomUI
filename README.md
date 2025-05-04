@@ -26,8 +26,9 @@ Create a `.env.local` file in the root directory:
 ```
 MONGODB_URI=your_mongodb_connection_string
 MIDTRANS_SERVER_KEY=your_midtrans_server_key
+MIDTRANS_PRODUCTION=false
 MIDTRANS_CLIENT_KEY=your_midtrans_client_key
-NEXT_PUBLIC_MIDTRANS_CLIENT_KEY=your_midtrans_client_key
+
 ```
 
 ### Installation
