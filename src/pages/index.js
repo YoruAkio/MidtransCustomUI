@@ -23,6 +23,7 @@ export default function Home() {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [pendingPaymentModalOpen, setPendingPaymentModalOpen] = useState(false);
   const [showPendingNotification, setShowPendingNotification] = useState(false);
+  const [pendingPayment, setPendingPayment] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const [userData, setUserData] = useState(null);
   const [orderData, setOrderData] = useState(null);
@@ -85,6 +86,7 @@ export default function Home() {
       if (data.hasPendingOrder) {
         setOrderData(data.order);
         setShowPendingNotification(true);
+        setPendingPayment(true);
       }
     } catch (error) {
       console.error("Error checking pending order:", error);
@@ -220,9 +222,9 @@ export default function Home() {
   // Create order
   const createOrder = async (serviceType) => {
     if (!userData) return;
-  
+
     setIsLoading(true);
-  
+
     try {
       const response = await fetch("/api/payment/create", {
         method: "POST",
@@ -234,13 +236,14 @@ export default function Home() {
           serviceType,
         }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         setOrderData({
           ...data.order,
-          qrCodeUrl: data.qrCodeUrl
+          price: data.order.price,
+          qrCodeUrl: data.qrCodeUrl,
         });
         setPaymentModalOpen(true);
       } else if (data.pendingOrder) {
@@ -260,9 +263,9 @@ export default function Home() {
   // Complete pending payment
   const handleCompletePayment = async () => {
     if (!orderData) return;
-    
+
     setIsLoading(true);
-    
+
     try {
       const response = await fetch("/api/payment/check-pending", {
         method: "POST",
@@ -271,14 +274,15 @@ export default function Home() {
         },
         body: JSON.stringify({ userId: userData._id }),
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok && data.hasPendingOrder) {
         // Set orderId and update orderData with QR code URL
         setOrderData({
           ...data.order,
-          qrCodeUrl: data.qrCodeUrl
+          price: data.order.price,
+          qrCodeUrl: data.qrCodeUrl,
         });
         setPendingPaymentModalOpen(false);
         setShowPendingNotification(false);
@@ -287,7 +291,7 @@ export default function Home() {
         // No pending order or error
         setPendingPayment(false);
         setOrderData(null);
-        showAlert("error", "No pending payment found or payment expired");
+        alert("No pending payment found or payment expired");
       }
     } catch (error) {
       console.error("Error completing payment:", error);
@@ -321,6 +325,7 @@ export default function Home() {
         setOrderData(null);
         setPendingPaymentModalOpen(false);
         setShowPendingNotification(false);
+        setPendingPayment(false);
         alert("Payment cancelled successfully");
       }
     } catch (error) {
@@ -835,13 +840,19 @@ export default function Home() {
       {/* Payment Modal */}
       <PaymentModal
         isOpen={paymentModalOpen}
-        onClose={() => setPaymentModalOpen(false)}
+        onClose={(wasSuccessful) => {
+          setPaymentModalOpen(false);
+          if (wasSuccessful) {
+            setOrderData(null);
+            setPendingPayment(false);
+            setShowPendingNotification(false);
+            setPaymentStatus("idle");
+          }
+        }}
         order={orderData}
-        paymentToken={paymentToken}
         onPaymentProcessing={() => setPaymentStatus("processing")}
         onPaymentSuccess={() => {
           setPaymentStatus("success");
-          setOrderData(null);
         }}
         onPaymentError={(message) => {
           setPaymentStatus("error");

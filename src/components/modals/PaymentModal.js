@@ -20,6 +20,11 @@ export default function PaymentModal({
   
   // Format price to IDR
   const formatPrice = (price) => {
+    // Check if price is a valid number before formatting
+    if (price === undefined || price === null || isNaN(Number(price))) {
+      return "Rp 0"; // Return a default value if price is invalid
+    }
+    
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
@@ -32,6 +37,21 @@ export default function PaymentModal({
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+  
+  // Reset all states when modal closes
+  const handleClose = () => {
+    if (status === "success") {
+      // Only reset when payment was successful
+      setQrImage(null);
+      setStatus("pending");
+      setErrorMessage("");
+      setCountdown(900);
+      // Call the parent's onClose which should also reset any parent component states
+      onClose(true); // Pass true to indicate successful payment closure
+    } else {
+      onClose(false); // Regular close, not after success
+    }
   };
   
   // Load QR code image
@@ -52,6 +72,11 @@ export default function PaymentModal({
       };
       
       img.src = order.qrCodeUrl;
+    }
+    
+    // Reset status when modal opens
+    if (isOpen && status !== "pending") {
+      setStatus("pending");
     }
     
     return () => {
@@ -145,7 +170,7 @@ export default function PaymentModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4"
-          onClick={() => status !== "pending" && onClose()}
+          onClick={() => status !== "pending" && handleClose()}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -182,7 +207,7 @@ export default function PaymentModal({
                   </div>
                 </div>
                 <motion.button
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="w-full py-3.5 bg-[#5E81F4] text-white rounded-lg font-medium hover:shadow-lg transition-all duration-300"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -200,7 +225,7 @@ export default function PaymentModal({
                   {errorMessage || "Something went wrong with your payment. Please try again."}
                 </p>
                 <motion.button
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="w-full py-3.5 bg-[#5E81F4] text-white rounded-lg font-medium hover:shadow-lg transition-all duration-300"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -215,7 +240,7 @@ export default function PaymentModal({
                     <FaQrcode className="text-[#5E81F4]" />
                     Scan QR Code to Pay
                   </h2>
-                  <button onClick={onClose} className="text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors">
+                  <button onClick={handleClose} className="text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors">
                     <FaTimes />
                   </button>
                 </div>
