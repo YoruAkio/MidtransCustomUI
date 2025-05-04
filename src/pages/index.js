@@ -16,6 +16,8 @@ import UserInfoModal from "../components/modals/UserInfoModal";
 import PaymentModal from "../components/modals/PaymentModal";
 import PendingPaymentModal from "../components/modals/PendingPaymentModal";
 import PaymentNotification from "../components/notifications/PaymentNotification";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
@@ -337,80 +339,13 @@ export default function Home() {
         <div className="fixed bottom-20 right-10 w-80 h-80 rounded-full bg-[#FF7D6B]/10 filter blur-3xl hidden md:block" />
         <div className="fixed top-40 right-10 w-40 h-40 rounded-full bg-[#8C7AE6]/10 filter blur-3xl hidden md:block" />
 
-        {/* Header */}
-        <motion.header
-          className="sticky top-0 z-50 backdrop-blur-md bg-white/60 border-b border-white/20 px-6 py-4"
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        >
-          <div className="max-w-6xl mx-auto flex justify-between items-center">
-            <motion.div
-              className="flex items-center gap-2"
-              whileHover={{ scale: 1.05 }}
-            >
-              <FaCode className="text-[#5E81F4] text-2xl" />
-              <span className="font-bold text-xl tracking-tight">YoruAkio</span>
-            </motion.div>
-
-            <nav className="hidden md:block">
-              <ul className="flex gap-8 items-center">
-                <motion.li
-                  onClick={() => scrollToSection(servicesRef)}
-                  whileHover={{ scale: 1.05 }}
-                  className="cursor-pointer font-medium hover:text-[#5E81F4]"
-                >
-                  Services
-                </motion.li>
-                <motion.li
-                  onClick={() => scrollToSection(processRef)}
-                  whileHover={{ scale: 1.05 }}
-                  className="cursor-pointer font-medium hover:text-[#5E81F4]"
-                >
-                  Process
-                </motion.li>
-                <motion.li
-                  onClick={() => scrollToSection(contactRef)}
-                  whileHover={{ scale: 1.05 }}
-                  className="cursor-pointer font-medium hover:text-[#5E81F4]"
-                >
-                  Contact
-                </motion.li>
-                <motion.li
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <button
-                    onClick={() => scrollToSection(contactRef)}
-                    className="px-5 py-2 bg-[#5E81F4] text-white rounded-full font-medium hover:shadow-lg transition duration-300"
-                  >
-                    Get Started
-                  </button>
-                </motion.li>
-              </ul>
-            </nav>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden">
-              <button className="p-2 rounded-lg bg-white/70 border border-white/20">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </motion.header>
+        {/* Navbar */}
+        <Navbar
+          scrollToSection={scrollToSection}
+          servicesRef={servicesRef}
+          processRef={processRef}
+          contactRef={contactRef}
+        />
 
         {/* Hero Section */}
         <section className="py-20 md:py-24 px-4 md:px-6">
@@ -767,50 +702,7 @@ export default function Home() {
         </section>
 
         {/* Footer */}
-        <footer className="py-8 md:py-10 px-4 md:px-6 border-t border-white/20">
-          <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <FaCode className="text-[#5E81F4] text-xl" />
-              <span className="font-bold text-lg">YoruAkio</span>
-            </div>
-
-            <p className="text-[#666] text-center md:text-left text-sm md:text-base">
-              &copy; {new Date().getFullYear()} YoruAkio. All rights reserved.
-              <br className="md:hidden" /> Building beautiful web experiences
-              with JavaScript.
-            </p>
-
-            <div className="flex gap-4 mt-4 md:mt-0">
-              <motion.a
-                href="https://t.me/ethermite"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/70 flex items-center justify-center text-[#5E81F4] border border-white/20"
-                whileHover={{ y: -5 }}
-              >
-                <FaTelegramPlane />
-              </motion.a>
-              <motion.a
-                href="https://twitter.com/yoruakio"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/70 flex items-center justify-center text-[#5E81F4] border border-white/20"
-                whileHover={{ y: -5 }}
-              >
-                <FaTwitter />
-              </motion.a>
-              <motion.a
-                href="mailto:yoruakio@proton.me"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/70 flex items-center justify-center text-[#5E81F4] border border-white/20"
-                whileHover={{ y: -5 }}
-              >
-                <FaEnvelope />
-              </motion.a>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </div>
 
       {/* User Info Modal */}
